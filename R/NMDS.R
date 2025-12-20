@@ -68,7 +68,7 @@ WF1$PlotID<-as.vector(WF1$PlotID)
 
 ellena <- read_excel("ENV.xlsx", sheet = "Comb")
 
-ellena2<-ellena[,5:11]
+ellena2<-ellena[,1:11]
 
 ###Correct nmds to use as plots with cerastium fontanum have less than 4 species 
 
@@ -100,10 +100,10 @@ abundance.matrixCF <- add_column(Buffer = rep(c(1,1,1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 abundance.matrixCF<-cbind(abundance.matrixCF,ellena2)
 
-"a.mO<-abundance.matrixCF[,3:159]
+a.mO<-abundance.matrixCF[,3:159]
 SiteO<-abundance.matrixCF[,1]
 
-BufferO<-abundance.matrixCF[,2]"
+BufferO<-abundance.matrixCF[,2]
 
 abundance.matrixCF$Site<-factor(abundance.matrixCF$Site)
 
@@ -112,11 +112,17 @@ site_dummies <- model.matrix(~ Site - 1, data = abundance.matrixCF)
 site_dummies_df <- as.data.frame(site_dummies)
 
 # Step 4: Combine with your original environmental data
+ENVCF<-abundance.matrixCF[,160:170]
+
 ENVCF <- cbind(ENVCF, site_dummies_df)
 
-ENVCF<-abundance.matrixCF[,160:166]
-
 ENVCF <- subset(ENVCF, select = -weighted.ruderality)
+
+ENVCF <- subset(ENVCF, select = -Site1)
+
+ENVCF <- subset(ENVCF, select = -Site2)
+
+ENVCF <- subset(ENVCF, select = -Site3)
 
 
 AllCF<-metaMDS(a.mO,
@@ -131,24 +137,35 @@ bufscf<-factor(rep(c( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 
 print(colnames(ENVCF))
 
-colnames(ENVCF) <- c("Distance.Road", "Distance.Turbine", "Altitude","Open.water", "Bare.soil", "Bare.rock", "Froya" ,"Smola", "Ytre Vikna" )
+colnames(ENVCF) <- c("Light", "Moisture", "Nutrients", "Reactivity", "Road distance", "Distance to Turbine", "Altitude","Open water", "Bare Soil", "Bare Rock" )
 
 ENVCF
 fitcf<-envfit(AllCF,ENVCF,permu=999)
 fitcf
 plot(fitcf,p.max=0.05, col="black")
 
+# colours from Lukas if i want to change to the exact ones #FDe735ff", "#75d054ff", "#2c728eff"
 
-cols<-c("#56B4E9","#E69F00","#009E73")
-light<-c("#F6C97A","#A6D8F0","#80D6B0")
+cols<-c("#4682B4","#AADC32","#FDE725")
+light<-c("#7BAFD1","#C9E96F","#FFF27F")
+
+pchvec <- c(21, 24, 22)
+pchvec <- as.numeric(as.factor(Site))
+
+
 
 par(mfrow = c(1, 1))
 
 library(ggplot2)
-png("NMDS03.08.png", width = 30, height = 20, units = "cm", res = 400)
+png("NMDSnopointsnosite20.12.png", width = 30, height = 20, units = "cm", res = 400)
 
-plot(AllCF,type = "n", xlim = c(-1.7, 1.3), ylim = c(-1.7, 1.5))
-text(AllCF, display = "sites", col=light[bufscf], cex=0.6)
+plot(AllCF,type = "n", xlim = c(-1.5, 1.3), ylim = c(-1.5, 1.6))
+
+points(AllCF, display = "sites",                          # Filled circle
+bg = light[bufscf],  # Fill color from your 'light' palette
+col = "black",                     # Border color
+cex = 1,pch = pchvec[SiteO]) 
+
 #points(AllCF, display="species", pch = 3, col = "wheat4", cex = 0.3)
 #ordipointlabel(AllCF, display="species", col="brown", cex = 1, add = TRUE)
 
@@ -156,11 +173,15 @@ text(AllCF, display = "sites", col=light[bufscf], cex=0.6)
 ordiellipse(AllCF, BufferO,kind = "sd", conf = 0.95, lwd = 3, col = cols)
 #ordiellipse(buff10, Site10,kind = "sd", conf = 0.95, lwd = 2, col = cols, fill = TRUE, alpha = 0.3)
 #ordispider(AllCF,BufferO, label = F, col = cols)
-legend("topright", legend =c('Distance 0-10 m', 'Distance 10-50 m', 'Distance 50-120 m'), pch=16, pt.cex=2, cex=1, bty='n',
-       col = cols)
+legend("topright", legend =c('Distance 0-10 m', 'Distance 10-50 m', 'Distance 50-120 m'), pch=21,  pt.cex = c(1.8, 1.8, 1.8), cex=1, bty='n',
+       col = cols, pt.bg = cols)
+legend("top", legend =c('F4', 'Y12', 'S19'), pch=pchvec,  pt.cex = c(1.8, 1.6, 1.8), cex=1, bty='n',
+       col = "Black", pt.bg = "Black", ncol = 3)
 legend("topleft", legend = "Bray curtis, stress = 0.1796")
 title("NMDS ordination of all sites combined", cex=4)
-plot(fitcf,p.max=0.05, col="black", cex = 1.2)
+plot(fitcf,p.max=0.05, col="Black", cex = 1.5)
+
+
 
 dev.off()
 
