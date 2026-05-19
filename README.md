@@ -11,4 +11,4 @@ This repository contains the data and code for the statistical analyses in the m
   - `.Rdata` model objects of the CLV and fourth corner models, stored for effectiveness and reproducibility of inference.
  
 ## Contact
-For questions about the data and code, please contact repository maintainer Audun Rugstad: [](mailto:audun.rugstad@ntnu.no)
+For questions about the data and code, please contact repository maintainer Audun Rugstad: [audun.rugstad@ntnu.no](mailto:audun.rugstad@ntnu.no)
