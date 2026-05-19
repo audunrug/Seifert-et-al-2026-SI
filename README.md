@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18001567.svg)](https://doi.org/10.5281/zenodo.18001567)
+
 # Seifert et al (2026) supplementary material
 This repository contains the data and code for the statistical analyses in the manuscript "Onshore wind energy development causes localized but lasting shifts in plant community composition and function" (Seifert 2026).
 
